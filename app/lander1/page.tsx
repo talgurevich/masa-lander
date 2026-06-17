@@ -3,6 +3,7 @@
 import { FormEvent, useRef, useState } from "react";
 
 type FieldKey = "name" | "phone" | "email";
+type SubmitState = "idle" | "submitting" | "success" | "error";
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,20 +12,26 @@ export default function Home() {
     phone: false,
     email: false,
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const formRef = useRef<HTMLFormElement>(null);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitState === "submitting") return;
+
     const fd = new FormData(e.currentTarget);
-    const name = String(fd.get("name") || "").trim();
-    const phone = String(fd.get("phone") || "").trim();
-    const email = String(fd.get("email") || "").trim();
+    const payload = {
+      name: String(fd.get("name") || "").trim(),
+      phone: String(fd.get("phone") || "").trim(),
+      email: String(fd.get("email") || "").trim(),
+      city: String(fd.get("city") || "").trim(),
+      age: String(fd.get("age") || "").trim(),
+    };
 
     const next = {
-      name: name.length < 2,
-      phone: !/^[0-9+\-\s()]{9,15}$/.test(phone),
-      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+      name: payload.name.length < 2,
+      phone: !/^[0-9+\-\s()]{9,15}$/.test(payload.phone),
+      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email),
     };
     setErrors(next);
     if (next.name || next.phone || next.email) {
@@ -34,7 +41,19 @@ export default function Home() {
       }
       return;
     }
-    setSubmitted(true);
+
+    setSubmitState("submitting");
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("submit_failed");
+      setSubmitState("success");
+    } catch {
+      setSubmitState("error");
+    }
   }
 
   function clearError(key: FieldKey) {
@@ -129,7 +148,7 @@ export default function Home() {
           <p className="sec-lead">השאירו פרטים ונחזור אליכם עם כל המידע על המסע הקרוב.</p>
 
           <div className="form-card">
-            {!submitted && (
+            {submitState !== "success" && (
               <form ref={formRef} onSubmit={onSubmit} noValidate>
                 <div className={`field full${errors.name ? " bad" : ""}`}>
                   <label htmlFor="name">שם מלא <span className="req">*</span></label>
@@ -184,13 +203,18 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="form-submit">
-                  <button type="submit" className="btn btn-primary">שליחה</button>
+                  <button type="submit" className="btn btn-primary" disabled={submitState === "submitting"}>
+                    {submitState === "submitting" ? "שולח..." : "שליחה"}
+                  </button>
                 </div>
+                {submitState === "error" && (
+                  <p className="submit-error">משהו השתבש. אנא נסו שוב בעוד רגע.</p>
+                )}
                 <p className="consent">בלחיצה על &ldquo;שליחה&rdquo; אני מאשר/ת קבלת מידע על התוכנית.</p>
               </form>
             )}
 
-            {submitted && (
+            {submitState === "success" && (
               <div className="form-success show">
                 <div className="check">
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
