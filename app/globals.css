@@ -224,13 +224,71 @@ section.block { padding: 84px 0; }
   width: 100%;
   color: var(--ink);
 }
-.field input:focus {
+.field input:focus,
+.field select:focus {
   outline: none;
   border-color: var(--teal);
   background: #fff;
   box-shadow: 0 0 0 4px rgba(27, 143, 147, 0.13);
 }
-.field input.invalid { border-color: #d9534f; background: #fdf3f3; }
+.field input.invalid,
+.field select.invalid { border-color: #d9534f; background: #fdf3f3; }
+
+.field select {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 13px 15px;
+  border: 1.5px solid var(--line);
+  border-radius: 11px;
+  background: var(--bg-soft);
+  transition: 0.18s;
+  width: 100%;
+  color: var(--ink);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2316262a' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 15px center;
+  padding-inline-start: 38px;
+  cursor: pointer;
+}
+.field input[type="date"] {
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.field input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  margin-inline-start: 0;
+  margin-inline-end: auto;
+}
+
+.consent-field { margin-top: 8px; margin-bottom: 18px; }
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 0.94rem;
+  color: var(--ink);
+  cursor: pointer;
+  line-height: 1.5;
+  padding: 14px 16px;
+  background: var(--bg-soft);
+  border: 1.5px solid var(--line);
+  border-radius: 11px;
+  transition: 0.18s;
+}
+.consent-label:hover { border-color: var(--teal); }
+.consent-label input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--teal);
+  cursor: pointer;
+}
+.consent-field.bad .consent-label { border-color: #d9534f; background: #fdf3f3; }
 .err { color: #d9534f; font-size: 0.82rem; font-weight: 600; display: none; }
 .field.bad .err { display: block; }
 .form-submit { margin-top: 6px; }

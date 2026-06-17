@@ -2,16 +2,48 @@
 
 import { FormEvent, useRef, useState } from "react";
 
-type FieldKey = "name" | "phone" | "email";
+type FieldKey = "name" | "idnum" | "email" | "phone" | "city" | "programCity" | "dob" | "source" | "consent";
 type SubmitState = "idle" | "submitting" | "success" | "error";
+
+const PROGRAM_CITIES = [
+  "ראשון לציון",
+  "פתח תקוה",
+  "בת ים",
+  "נתניה",
+  "אשקלון",
+  "אשדוד",
+  "ירושלים",
+  "חיפה",
+  "עכו",
+  "בית שאן/עמק הירדן/עמק המעיינות",
+  "קריית מלאכי + קריית גת",
+  "נהריה/מטה אשר/מעלה יוסף/שלומי",
+  "בית ג'אן/חורפיש/פקיעין",
+  "ירכא/ג'וליס/יאנוח ג'ת",
+  "מעלה אדומים",
+  "יקנעם",
+];
+
+const HEARD_SOURCES = [
+  "סמס משרד הביטחון",
+  "מרכז הצעירים",
+  "חברים",
+  "פרסום",
+  "אחר",
+  "שער לעתיד",
+  "פייסבוק- ממומן",
+  "רשתות חברתיות",
+  "האגף להכוונת חיילים משוחררים ומילואים",
+];
+
+const blankErrors: Record<FieldKey, boolean> = {
+  name: false, idnum: false, email: false, phone: false, city: false,
+  programCity: false, dob: false, source: false, consent: false,
+};
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [errors, setErrors] = useState<Record<FieldKey, boolean>>({
-    name: false,
-    phone: false,
-    email: false,
-  });
+  const [errors, setErrors] = useState<Record<FieldKey, boolean>>(blankErrors);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -22,23 +54,34 @@ export default function Home() {
     const fd = new FormData(e.currentTarget);
     const payload = {
       name: String(fd.get("name") || "").trim(),
-      phone: String(fd.get("phone") || "").trim(),
+      idnum: String(fd.get("idnum") || "").trim(),
+      gender: String(fd.get("gender") || "").trim(),
       email: String(fd.get("email") || "").trim(),
+      phone: String(fd.get("phone") || "").trim(),
       city: String(fd.get("city") || "").trim(),
-      age: String(fd.get("age") || "").trim(),
+      programCity: String(fd.get("programCity") || "").trim(),
+      dob: String(fd.get("dob") || "").trim(),
+      source: String(fd.get("source") || "").trim(),
+      consent: fd.get("consent") === "on",
     };
 
-    const next = {
+    const next: Record<FieldKey, boolean> = {
       name: payload.name.length < 2,
-      phone: !/^[0-9+\-\s()]{9,15}$/.test(payload.phone),
+      idnum: !/^\d{9}$/.test(payload.idnum),
       email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email),
+      phone: !/^[0-9+\-\s()]{9,15}$/.test(payload.phone),
+      city: payload.city.length < 2,
+      programCity: !payload.programCity,
+      dob: !/^\d{4}-\d{2}-\d{2}$/.test(payload.dob),
+      source: !payload.source,
+      consent: !payload.consent,
     };
     setErrors(next);
-    if (next.name || next.phone || next.email) {
-      const firstBad = (Object.keys(next) as FieldKey[]).find((k) => next[k]);
-      if (firstBad) {
-        formRef.current?.querySelector<HTMLInputElement>(`#${firstBad}`)?.focus();
-      }
+    const firstBad = (Object.keys(next) as FieldKey[]).find((k) => next[k]);
+    if (firstBad) {
+      const el = formRef.current?.querySelector<HTMLElement>(`#${firstBad}`);
+      el?.focus();
+      el?.scrollIntoView({ block: "center", behavior: "smooth" });
       return;
     }
 
@@ -153,10 +196,7 @@ export default function Home() {
                 <div className={`field full${errors.name ? " bad" : ""}`}>
                   <label htmlFor="name">שם מלא <span className="req">*</span></label>
                   <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    autoComplete="name"
+                    type="text" id="name" name="name" autoComplete="name"
                     placeholder="ישראל ישראלי"
                     className={errors.name ? "invalid" : ""}
                     onInput={() => clearError("name")}
@@ -164,43 +204,102 @@ export default function Home() {
                   <span className="err">נא להזין שם מלא</span>
                 </div>
                 <div className="grid2">
+                  <div className={`field${errors.idnum ? " bad" : ""}`}>
+                    <label htmlFor="idnum">תעודת זהות <span className="req">*</span></label>
+                    <input
+                      type="text" id="idnum" name="idnum" inputMode="numeric"
+                      maxLength={9} placeholder="9 ספרות"
+                      className={errors.idnum ? "invalid" : ""}
+                      onInput={() => clearError("idnum")}
+                    />
+                    <span className="err">תעודת זהות חייבת להיות 9 ספרות</span>
+                  </div>
+                  <div className="field">
+                    <label htmlFor="gender">מגדר</label>
+                    <select id="gender" name="gender" defaultValue="">
+                      <option value="">בחרו...</option>
+                      <option value="זכר">זכר</option>
+                      <option value="נקבה">נקבה</option>
+                    </select>
+                  </div>
+                  <div className={`field${errors.email ? " bad" : ""}`}>
+                    <label htmlFor="email">אימייל <span className="req">*</span></label>
+                    <input
+                      type="email" id="email" name="email" autoComplete="email"
+                      placeholder="name@email.com" dir="ltr" style={{ textAlign: "right" }}
+                      className={errors.email ? "invalid" : ""}
+                      onInput={() => clearError("email")}
+                    />
+                    <span className="err">כתובת אימייל לא תקינה</span>
+                  </div>
                   <div className={`field${errors.phone ? " bad" : ""}`}>
                     <label htmlFor="phone">טלפון <span className="req">*</span></label>
                     <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      inputMode="tel"
-                      autoComplete="tel"
+                      type="tel" id="phone" name="phone" inputMode="tel" autoComplete="tel"
                       placeholder="050-0000000"
                       className={errors.phone ? "invalid" : ""}
                       onInput={() => clearError("phone")}
                     />
                     <span className="err">מספר טלפון לא תקין</span>
                   </div>
-                  <div className={`field${errors.email ? " bad" : ""}`}>
-                    <label htmlFor="email">אימייל <span className="req">*</span></label>
+                  <div className={`field${errors.city ? " bad" : ""}`}>
+                    <label htmlFor="city">עיר מגורים <span className="req">*</span></label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      autoComplete="email"
-                      placeholder="name@email.com"
-                      dir="ltr"
-                      style={{ textAlign: "right" }}
-                      className={errors.email ? "invalid" : ""}
-                      onInput={() => clearError("email")}
+                      type="text" id="city" name="city" autoComplete="address-level2"
+                      placeholder="תל אביב"
+                      className={errors.city ? "invalid" : ""}
+                      onInput={() => clearError("city")}
                     />
-                    <span className="err">כתובת אימייל לא תקינה</span>
+                    <span className="err">נא להזין עיר מגורים</span>
                   </div>
-                  <div className="field">
-                    <label htmlFor="city">עיר</label>
-                    <input type="text" id="city" name="city" autoComplete="address-level2" placeholder="תל אביב" />
+                  <div className={`field${errors.dob ? " bad" : ""}`}>
+                    <label htmlFor="dob">תאריך לידה <span className="req">*</span></label>
+                    <input
+                      type="date" id="dob" name="dob"
+                      min="1960-01-01" max="2010-12-31"
+                      className={errors.dob ? "invalid" : ""}
+                      onInput={() => clearError("dob")}
+                    />
+                    <span className="err">נא לבחור תאריך לידה</span>
                   </div>
-                  <div className="field">
-                    <label htmlFor="age">גיל / שנת שחרור</label>
-                    <input type="text" id="age" name="age" placeholder="לדוגמה: 23 / 2024" />
+                  <div className={`field full${errors.programCity ? " bad" : ""}`}>
+                    <label htmlFor="programCity">אשמח להרשם לתכנית בעיר/רשות <span className="req">*</span></label>
+                    <select
+                      id="programCity" name="programCity" defaultValue=""
+                      className={errors.programCity ? "invalid" : ""}
+                      onChange={() => clearError("programCity")}
+                    >
+                      <option value="">בחרו עיר/רשות...</option>
+                      {PROGRAM_CITIES.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <span className="err">נא לבחור עיר/רשות</span>
                   </div>
+                  <div className={`field full${errors.source ? " bad" : ""}`}>
+                    <label htmlFor="source">דרך מי שמעתי עליכם? <span className="req">*</span></label>
+                    <select
+                      id="source" name="source" defaultValue=""
+                      className={errors.source ? "invalid" : ""}
+                      onChange={() => clearError("source")}
+                    >
+                      <option value="">בחרו...</option>
+                      {HEARD_SOURCES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <span className="err">נא לבחור</span>
+                  </div>
+                </div>
+                <div className={`field full consent-field${errors.consent ? " bad" : ""}`}>
+                  <label className="consent-label" htmlFor="consent">
+                    <input
+                      type="checkbox" id="consent" name="consent"
+                      onChange={() => clearError("consent")}
+                    />
+                    <span>אני מאשר/ת העברה של הפרטים שלי למשרד הביטחון לאישור, בכדי שאוכל להשתתף בתוכנית <span className="req">*</span></span>
+                  </label>
+                  <span className="err">חובה לאשר על מנת להמשיך</span>
                 </div>
                 <div className="form-submit">
                   <button type="submit" className="btn btn-primary" disabled={submitState === "submitting"}>
@@ -210,7 +309,6 @@ export default function Home() {
                 {submitState === "error" && (
                   <p className="submit-error">משהו השתבש. אנא נסו שוב בעוד רגע.</p>
                 )}
-                <p className="consent">בלחיצה על &ldquo;שליחה&rdquo; אני מאשר/ת קבלת מידע על התוכנית.</p>
               </form>
             )}
 
