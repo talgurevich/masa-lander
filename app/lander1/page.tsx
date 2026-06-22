@@ -144,7 +144,7 @@ export default function Home() {
         <div className="wrap hero-inner">
           <h1>המסע שלך אחרי השחרור, מתחיל כאן.</h1>
           <p className="sub">
-            התוכנית מובילה לצעירות וצעירים אחרי שירות צבאי ולאומי — שנה של צמיחה, חברּות ומשמעות.
+            התכנית המובילה בישראל בכל מה שקשור לעצמי, החוסן שלי וההצלחות שמחכות לי בהמשך הדרך
           </p>
           <div className="hero-actions">
             <a href="#register" className="btn btn-light">בואו להיות חלק</a>
@@ -169,7 +169,7 @@ export default function Home() {
       <section className="block movie" id="movie">
         <div className="wrap">
           <p className="eyebrow">הסרט שלנו</p>
-          <h2 className="sec-title">הצצה אל המסע</h2>
+          <h2 className="sec-title">הצצה אל התכנית שלנו</h2>
           <div className="sec-rule"></div>
           <div className="video-frame">
             <iframe
