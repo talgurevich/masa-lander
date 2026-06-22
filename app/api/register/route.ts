@@ -8,10 +8,7 @@ const COL = {
   email: "lead_email",
   phone: "lead_phone",
   city: "text_mkvvdrmy",
-  programCity: "color_mm0ea80g",
-  dob: "date_mkvvvnmp",
-  source: "color_mkvvx7se",
-  consent: "color_mkvvsn1r",
+  serviceEnd: "date_mkvvvbjv",
 } as const;
 
 export const runtime = "nodejs";
@@ -36,30 +33,21 @@ export async function POST(req: NextRequest) {
   const email = String(body.email ?? "").trim();
   const phone = String(body.phone ?? "").trim();
   const city = String(body.city ?? "").trim();
-  const programCity = String(body.programCity ?? "").trim();
-  const dob = String(body.dob ?? "").trim();
-  const source = String(body.source ?? "").trim();
-  const consent = body.consent === true;
+  const serviceEnd = String(body.serviceEnd ?? "").trim();
 
   if (name.length < 2) return NextResponse.json({ error: "invalid_name" }, { status: 400 });
   if (!/^\d{9}$/.test(idnum)) return NextResponse.json({ error: "invalid_idnum" }, { status: 400 });
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ error: "invalid_email" }, { status: 400 });
   if (!/^[0-9+\-\s()]{9,15}$/.test(phone)) return NextResponse.json({ error: "invalid_phone" }, { status: 400 });
   if (city.length < 2) return NextResponse.json({ error: "invalid_city" }, { status: 400 });
-  if (!programCity) return NextResponse.json({ error: "invalid_program_city" }, { status: 400 });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return NextResponse.json({ error: "invalid_dob" }, { status: 400 });
-  if (!source) return NextResponse.json({ error: "invalid_source" }, { status: 400 });
-  if (!consent) return NextResponse.json({ error: "consent_required" }, { status: 400 });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(serviceEnd)) return NextResponse.json({ error: "invalid_service_end" }, { status: 400 });
 
   const columnValues: Record<string, unknown> = {
     [COL.idnum]: idnum,
     [COL.email]: { email, text: email },
     [COL.phone]: { phone: phone.replace(/[^\d+]/g, ""), countryShortName: "IL" },
     [COL.city]: city,
-    [COL.programCity]: { label: programCity },
-    [COL.dob]: { date: dob },
-    [COL.source]: { label: source },
-    [COL.consent]: { label: "מאשר.ת" },
+    [COL.serviceEnd]: { date: serviceEnd },
   };
   if (gender) columnValues[COL.gender] = { label: gender };
 

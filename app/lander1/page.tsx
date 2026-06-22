@@ -2,43 +2,12 @@
 
 import { FormEvent, useRef, useState } from "react";
 
-type FieldKey = "name" | "idnum" | "email" | "phone" | "city" | "programCity" | "dob" | "source" | "consent";
+type FieldKey = "name" | "idnum" | "email" | "phone" | "city" | "serviceEnd";
 type SubmitState = "idle" | "submitting" | "success" | "error";
-
-const PROGRAM_CITIES = [
-  "ראשון לציון",
-  "פתח תקוה",
-  "בת ים",
-  "נתניה",
-  "אשקלון",
-  "אשדוד",
-  "ירושלים",
-  "חיפה",
-  "עכו",
-  "בית שאן/עמק הירדן/עמק המעיינות",
-  "קריית מלאכי + קריית גת",
-  "נהריה/מטה אשר/מעלה יוסף/שלומי",
-  "בית ג'אן/חורפיש/פקיעין",
-  "ירכא/ג'וליס/יאנוח ג'ת",
-  "מעלה אדומים",
-  "יקנעם",
-];
-
-const HEARD_SOURCES = [
-  "סמס משרד הביטחון",
-  "מרכז הצעירים",
-  "חברים",
-  "פרסום",
-  "אחר",
-  "שער לעתיד",
-  "פייסבוק- ממומן",
-  "רשתות חברתיות",
-  "האגף להכוונת חיילים משוחררים ומילואים",
-];
 
 const blankErrors: Record<FieldKey, boolean> = {
   name: false, idnum: false, email: false, phone: false, city: false,
-  programCity: false, dob: false, source: false, consent: false,
+  serviceEnd: false,
 };
 
 export default function Home() {
@@ -59,10 +28,7 @@ export default function Home() {
       email: String(fd.get("email") || "").trim(),
       phone: String(fd.get("phone") || "").trim(),
       city: String(fd.get("city") || "").trim(),
-      programCity: String(fd.get("programCity") || "").trim(),
-      dob: String(fd.get("dob") || "").trim(),
-      source: String(fd.get("source") || "").trim(),
-      consent: fd.get("consent") === "on",
+      serviceEnd: String(fd.get("serviceEnd") || "").trim(),
     };
 
     const next: Record<FieldKey, boolean> = {
@@ -71,10 +37,7 @@ export default function Home() {
       email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email),
       phone: !/^[0-9+\-\s()]{9,15}$/.test(payload.phone),
       city: payload.city.length < 2,
-      programCity: !payload.programCity,
-      dob: !/^\d{4}-\d{2}-\d{2}$/.test(payload.dob),
-      source: !payload.source,
-      consent: !payload.consent,
+      serviceEnd: !/^\d{4}-\d{2}-\d{2}$/.test(payload.serviceEnd),
     };
     setErrors(next);
     const firstBad = (Object.keys(next) as FieldKey[]).find((k) => next[k]);
@@ -186,7 +149,7 @@ export default function Home() {
       <section className="block register" id="register">
         <div className="wrap">
           <p className="eyebrow">הצטרפו אלינו</p>
-          <h2 className="sec-title">הרשמה למסע</h2>
+          <h2 className="sec-title">הרשמה לתכנית</h2>
           <div className="sec-rule"></div>
           <p className="sec-lead">השאירו פרטים ונחזור אליכם עם כל המידע על המסע הקרוב.</p>
 
@@ -252,54 +215,15 @@ export default function Home() {
                     />
                     <span className="err">נא להזין עיר מגורים</span>
                   </div>
-                  <div className={`field${errors.dob ? " bad" : ""}`}>
-                    <label htmlFor="dob">תאריך לידה <span className="req">*</span></label>
+                  <div className={`field${errors.serviceEnd ? " bad" : ""}`}>
+                    <label htmlFor="serviceEnd">תאריך שחרור מהשירות <span className="req">*</span></label>
                     <input
-                      type="date" id="dob" name="dob"
-                      min="1960-01-01" max="2010-12-31"
-                      className={errors.dob ? "invalid" : ""}
-                      onInput={() => clearError("dob")}
+                      type="date" id="serviceEnd" name="serviceEnd"
+                      className={errors.serviceEnd ? "invalid" : ""}
+                      onInput={() => clearError("serviceEnd")}
                     />
-                    <span className="err">נא לבחור תאריך לידה</span>
+                    <span className="err">נא לבחור תאריך שחרור</span>
                   </div>
-                  <div className={`field full${errors.programCity ? " bad" : ""}`}>
-                    <label htmlFor="programCity">אשמח להרשם לתכנית בעיר/רשות <span className="req">*</span></label>
-                    <select
-                      id="programCity" name="programCity" defaultValue=""
-                      className={errors.programCity ? "invalid" : ""}
-                      onChange={() => clearError("programCity")}
-                    >
-                      <option value="">בחרו עיר/רשות...</option>
-                      {PROGRAM_CITIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                    <span className="err">נא לבחור עיר/רשות</span>
-                  </div>
-                  <div className={`field full${errors.source ? " bad" : ""}`}>
-                    <label htmlFor="source">דרך מי שמעתי עליכם? <span className="req">*</span></label>
-                    <select
-                      id="source" name="source" defaultValue=""
-                      className={errors.source ? "invalid" : ""}
-                      onChange={() => clearError("source")}
-                    >
-                      <option value="">בחרו...</option>
-                      {HEARD_SOURCES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    <span className="err">נא לבחור</span>
-                  </div>
-                </div>
-                <div className={`field full consent-field${errors.consent ? " bad" : ""}`}>
-                  <label className="consent-label" htmlFor="consent">
-                    <input
-                      type="checkbox" id="consent" name="consent"
-                      onChange={() => clearError("consent")}
-                    />
-                    <span>אני מאשר/ת העברה של הפרטים שלי למשרד הביטחון לאישור, בכדי שאוכל להשתתף בתוכנית <span className="req">*</span></span>
-                  </label>
-                  <span className="err">חובה לאשר על מנת להמשיך</span>
                 </div>
                 <div className="form-submit">
                   <button type="submit" className="btn btn-primary" disabled={submitState === "submitting"}>
@@ -358,7 +282,7 @@ export default function Home() {
             <h4>דברו איתנו</h4>
             <a href="mailto:office@mafligimelhaofek.org">office@mafligimelhaofek.org</a>
             <a href="https://www.masaelhaofek.org/" target="_blank" rel="noopener noreferrer">לאתר הראשי ▸</a>
-            <a href="#register">להרשמה למסע ▸</a>
+            <a href="#register">להרשמה לתכנית ▸</a>
           </div>
         </div>
         <div className="foot-bottom">© 2026 מסע אל האופק. כל הזכויות שמורות.</div>
