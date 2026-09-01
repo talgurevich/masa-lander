@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "משוב מובילים — מסע אל האופק",
+  title: "מיפוי צרכים מובילים — מסע אל האופק",
   description: "טופס משוב למובילות ומובילי התכנית.",
   robots: { index: false, follow: false },
 };

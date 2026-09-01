@@ -79,12 +79,28 @@ export default function LeaderFeedback() {
 
       <section className="block register survey">
         <div className="wrap">
-          <p className="eyebrow">משוב מובילים</p>
+          <p className="eyebrow">מיפוי צרכים מובילים</p>
           <h2 className="sec-title">אילו כלים דיגיטליים חסרים לכם?</h2>
           <div className="sec-rule"></div>
           <p className="sec-lead">
             אנחנו רוצים להבין איפה הזמן שלכם הולך לאיבוד, כדי לבנות כלים שיחזירו אותו אליכם. כ-7 דקות, ואין תשובות נכונות — הכי חשוב לנו הכנות שלכם.
           </p>
+
+          {/* Previews the themes of the survey before people commit to filling it in. */}
+          <div className="intro-themes">
+            <div className="theme">
+              <h3>איפה זה נשבר?</h3>
+              <p>חשבו על הפעם האחרונה שבה משהו לקח לכם הרבה יותר זמן ממה שהיה צריך. מה קרה?</p>
+            </div>
+            <div className="theme">
+              <h3>מה חוזר על עצמו?</h3>
+              <p>יש משהו שאתם עושים שוב ושוב, במקומות שונים, והייתם רוצים להפוך אותו לפשוט יותר? מה ואיך?</p>
+            </div>
+            <div className="theme">
+              <h3>אם היה לכם פתרון קסם…</h3>
+              <p>איזה כלי או פתרון היה יכול לחסוך לכם זמן, להקל על העבודה או לשפר אותה?</p>
+            </div>
+          </div>
 
           <div className="form-card">
             {submitState !== "success" && (

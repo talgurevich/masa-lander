@@ -364,6 +364,34 @@ footer { background: var(--teal-darker); color: rgba(255, 255, 255, 0.88); }
 /* ---------- Survey (/leader-feedback) ---------- */
 .slim-header .nav { justify-content: center; }
 .survey { padding-top: 64px; }
+/* Theme cards above the form — a preview of what the survey asks about. */
+.intro-themes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  max-width: 940px;
+  margin: 36px auto 0;
+  text-align: start;
+}
+.theme {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 14px;
+  padding: 22px 22px 24px;
+}
+.theme h3 {
+  font-family: var(--font-heebo);
+  font-size: 1.06rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 9px;
+}
+.theme p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+
 .q-section {
   font-family: var(--font-heebo);
   font-size: 1.12rem;
@@ -456,6 +484,7 @@ footer { background: var(--teal-darker); color: rgba(255, 255, 255, 0.88); }
   .nav-cta .btn { display: none; }
   .hamb { display: flex; }
   .foot-top { grid-template-columns: 1fr; gap: 34px; padding: 48px 0 38px; }
+  .intro-themes { grid-template-columns: 1fr; gap: 14px; max-width: 560px; }
   section.block { padding: 62px 0; }
   .hero { min-height: 90vh; }
   .hero-inner { padding: 90px 20px; }
