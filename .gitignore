@@ -7,3 +7,7 @@ next-env.d.ts
 
 # user-local artifacts that shouldn't ship
 screencapture-*.png
+.vercel
+
+# TypeScript incremental build cache
+*.tsbuildinfo
