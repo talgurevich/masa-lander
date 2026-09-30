@@ -2,12 +2,15 @@
 const nextConfig = {
   reactStrictMode: true,
   async rewrites() {
-    // The shared activity calendar lives in a separate Vercel project
-    // (github.com/talgurevich/masa-gantt) built with basePath "/gantt".
-    const gantt = "https://masa-gantt-2rfb.vercel.app";
+    // The team tools (login, hub, gantt, …) live in a separate Vercel project
+    // (github.com/talgurevich/masa-gantt) built with basePath "/tools".
+    // "/gantt" is its old home; that project redirects it to /tools/gantt.
+    const tools = "https://masa-gantt-2rfb.vercel.app";
     return [
-      { source: "/gantt", destination: `${gantt}/gantt` },
-      { source: "/gantt/:path*", destination: `${gantt}/gantt/:path*` },
+      { source: "/tools", destination: `${tools}/tools` },
+      { source: "/tools/:path*", destination: `${tools}/tools/:path*` },
+      { source: "/gantt", destination: `${tools}/gantt` },
+      { source: "/gantt/:path*", destination: `${tools}/gantt/:path*` },
     ];
   },
 };
