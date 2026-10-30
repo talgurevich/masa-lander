@@ -498,3 +498,38 @@ footer { background: var(--teal-darker); color: rgba(255, 255, 255, 0.88); }
   .scale-dot { width: 42px; height: 42px; }
   .scale-end { flex-basis: 100%; }
 }
+
+/* ---------- Portal (home page) ---------- */
+.portal { min-height: 100vh; }
+.portal .hero-inner { padding: 64px 16px; }
+.portal-logo { height: 88px; width: auto; margin-bottom: 22px; background: #fff; border-radius: 18px; padding: 10px 16px; }
+.portal-doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 760px;
+  margin-top: 40px;
+}
+.portal-door {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px 22px 26px;
+  box-shadow: var(--shadow);
+  transition: 0.22s ease;
+}
+.portal-door:hover { transform: translateY(-4px); }
+.portal-door h2 { font-size: 1.5rem; color: var(--teal-deep); }
+.portal-door p { color: var(--muted); font-size: 1.02rem; flex: 1; }
+.portal-door .btn { margin-top: 8px; }
+.btn-ghost-dark { background: transparent; color: var(--teal-deep); border-color: var(--teal-deep); }
+.portal-door:hover .btn-primary { background: var(--teal-deep); }
+.portal-door:hover .btn-ghost-dark { background: var(--teal-deep); color: #fff; }
+@media (max-width: 640px) {
+  .portal-doors { grid-template-columns: 1fr; }
+  .portal-logo { height: 70px; }
+}
